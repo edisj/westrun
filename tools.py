@@ -7,8 +7,7 @@ Module to make a nice registry of WESTPA commands
 """
 
 import subprocess
-from .cli import CommandBase
-
+from .westcli import CommandBase
 west_tools = ('w_bins', 'w_truncate', 'w_fork', 'w_assign', 'w_trace', 'w_fluxanl',
               'w_ipa', 'w_pdist', 'w_succ', 'w_crawl', 'w_direct', 'w_select',
               'w_states', 'w_eddist', 'w_ntop', 'w_multi_west', 'plothist', 'ploterr')
@@ -18,10 +17,10 @@ class WESTPAToolLoadingError(Exception):
     """Raised when no WESTPA tool could be found."""
 
 
-def tool_factory(clsname, name, base=CommandBase):
+def tool_factory(clsname, command_name, base=CommandBase):
     """ Factory for WESTPA commands."""
     clsdict = {
-        'command_name': name,
+        'command_name': command_name,
     }
     return type(clsname, (base,), clsdict)
 

@@ -7,7 +7,7 @@ WESTPA Run Analyzer
 from contextlib import contextmanager
 import subprocess
 from pathlib import Path
-from .cli import WESTcli
+from .westcli import WESTcli
 import pandas as pd
 import numpy as np
 import h5py
