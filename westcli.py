@@ -12,6 +12,7 @@ from pathlib import Path
 from wand.image import Image
 #from . import tools
 
+
 class CommandBase:
     """A class to generate the explicit command that will be fed into a bash shell."""
 
@@ -137,6 +138,7 @@ class WESTcli:
                 self._available_w_commands.append(name)
             except:
                 self._missing_w_commands.append(name)
+
 
 class Plothist(CommandBase):
     command_name='plothist'

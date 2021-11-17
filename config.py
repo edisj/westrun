@@ -11,14 +11,15 @@ import subprocess
 class WESTPAEnvironmentLoadingError(Exception):
     """Raised when WESTPA environment failed to build."""
 
-def set_west_environment(w_env): # w_env must be westpa.sh
+def set_west_environment(w_env):
     """ Set the environment from *w_env*.
 
+    w_env must be $WEST_ROOT/westpa.sh
     Currently, I'm just doing this explicitly... maybe from a config file later?
     """
 
-    envvars = ['WEST_ROOT', 'WEST_PYTHON', 'WEST_BIN',
-               'PATH', 'LD_LIBRARY_PATH']
+    envvars = ['WEST_ROOT', 'WEST_PYTHON', 'WEST_BIN', 'WEST_PYTHON_PATH',
+               'PATH', 'LD_LIBRARY_PATH', 'MANPATH', 'PKG_CONFIG_PATH']
 
     bash = subprocess.check_output('which bash', shell=True).decode().strip()
     cmdargs = [f'. {w_env} && echo ___${{{var}}}___' for var in envvars]
