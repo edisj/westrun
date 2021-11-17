@@ -16,7 +16,6 @@ import h5py
 class WESTRun(WESTcli):
 
     def __init__(self, WEST_SIM_ROOT, *args, **kwargs):
-        print ('WESTRun __init__ called!!')
         super(WESTRun, self).__init__(WEST_SIM_ROOT)
 
         self.root = Path(WEST_SIM_ROOT)

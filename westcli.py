@@ -19,7 +19,6 @@ class CommandBase:
     _important_variables = ['WEST_PYTHON', 'WEST_ROOT', 'WEST_BIN']
 
     def __init__(self, WEST_SIM_ROOT, *args, **kwargs):
-        print(f'CommandBase __init__ called for {self.command_name}')
         self.WEST_SIM_ROOT = Path(WEST_SIM_ROOT)
         self.WEST_PYTHON = None
         self.WEST_ROOT = None
@@ -41,8 +40,6 @@ class CommandBase:
     def run(self, command_name, *args, **kwargs):
         """run the command with arguments"""
 
-        print ("run called")
-        print (f"args: {args}\nkwargs: {kwargs}\n")
         processed_args = self._process_args(args, kwargs)
         cmd = self._build_command_line(command_name, processed_args)
         results = self._run_command(cmd)
@@ -51,7 +48,6 @@ class CommandBase:
 
     def _process_args(self, unprocessed_args, unprocessed_kwargs):
         """Put args in a dictionary where the keys are flags"""
-        print ('_process_args called\n')
         processed_args = {}
         if any(unprocessed_args):
             for arg in unprocessed_args:
@@ -69,18 +65,6 @@ class CommandBase:
         return processed_args
 
     def _build_command_line(self, command_name, processed_args):
-
-        print ('_build_command_line called')
-        print (f"processed_args: {processed_args}\n")
-        # temporary hack
-        #if command_name == 'w_bins':
-        #    command_name += ' info'
-        #elif command_name == 'plothist':
-        #    mode = kwargs.get('mode')
-        #    input_file = kwargs.get('input_file', 'hist.pdf')
-        #    dimension = kwargs.get('dimension', '0::pcoord')
-        #    command_name += f' {mode} {input_file} {dimension}'
-
         # the start of every command..
         cmd = f"cd {self.WEST_SIM_ROOT} ; {self.WEST_BIN}/{command_name} "
         for flag, value in processed_args.items():
@@ -89,7 +73,6 @@ class CommandBase:
         return cmd
 
     def _run_command(self, cmd, *args, **kwargs):
-        print('_run_command called from BaseCommand\n')
         bash = subprocess.check_output('which bash', shell=True).decode().strip()
         out = subprocess.run(cmd, shell=True, executable=bash)
 
@@ -103,7 +86,6 @@ class CommandBase:
         """Run the command!
         This method runs when the class constructor is called?
         """
-        print ('__call__ called\n')
         return self.run(self.command_name, *args, **kwargs)
 
 
@@ -117,7 +99,6 @@ class WESTcli:
     #from . import tools
 
     def __init__(self, WEST_SIM_ROOT, *args, **kwargs):
-        print('WESTcli __init__ called!!')
         self.WEST_SIM_ROOT = Path(WEST_SIM_ROOT)
         self._available_w_commands = []
         self._missing_w_commands = []
