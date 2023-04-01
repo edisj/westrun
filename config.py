@@ -8,6 +8,7 @@ Right now, I just want it to set up the shell environment
 import os
 import subprocess
 
+
 class WESTPAEnvironmentLoadingError(Exception):
     """Raised when WESTPA environment failed to build."""
 

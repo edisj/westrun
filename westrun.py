@@ -11,7 +11,7 @@ from .westcli import WESTcli
 import pandas as pd
 import numpy as np
 import h5py
-
+import matplotlib.pyplot as plt
 
 class WESTRun(WESTcli):
 
@@ -20,16 +20,10 @@ class WESTRun(WESTcli):
 
         self.root = Path(WEST_SIM_ROOT)
         self.run_name = self.root.stem
-        # self._datasets = {}
-        # self._parse_file_for_datasets() # fills above
-        # self._generate_methods_from_datasets()
-
 
     @contextmanager
     def h5file(self):
 
-        file_locked = None
-        handle = None
         try:
             handle = h5py.File(self.root / 'west.h5', 'r')
             file_locked = False
@@ -46,6 +40,12 @@ class WESTRun(WESTcli):
                 # deleting copy because the state of the file is always changing
                 subprocess.run(['rm', self.root / 'west_COPY.h5'])
 
+    def assign_h5(self):
+         return h5py.File(self.WEST_SIM_ROOT / 'ANALYSIS/BIN_FLUX/assign.h5')
+
+    def direct_h5(self):
+        return h5py.File(self.WEST_SIM_ROOT / 'ANALYSIS/BIN_FLUX/direct.h5')
+
     @property
     def summary(self):
 
@@ -57,6 +57,40 @@ class WESTRun(WESTcli):
         df.index += 1
 
         return df
+
+    @property
+    def conditional_fluxes(self):
+        with self.direct_h5() as f:
+            return f['conditional_fluxes'][()]
+
+    @property
+    def conditional_flux_evolution(self):
+        with self.direct_h5() as f:
+            return f['conditional_flux_evolution'][()]
+
+    @property
+    def total_fluxes(self):
+        with self.direct_h5() as f:
+            return f['total_fluxes'][()]
+
+    @property
+    def target_flux_evolution(self):
+        with self.direct_h5() as f:
+            return f['target_flux_evolution'][()]
+
+    @property
+    def rate_evolution(self):
+        with self.direct_h5() as f:
+            return f['rate_evolution'][()]
+
+    def _make_flux_matrices(self, dataset):
+
+        try:
+            return dataset['expected']
+        except IndexError:
+            return dataset
+
+
 
     def get_iteration_data(self, n_iter=1):
 
@@ -86,3 +120,52 @@ class WESTRun(WESTcli):
         df['SOD_distance'] = Na_distance
 
         return df.set_index('iteration')
+
+    def plot_conditional_fluxes(self):
+
+        with self.direct_h5():
+            conditional_fluxes = self.conditional_fluxes
+
+        flux_matrices = self._make_flux_matrices(conditional_fluxes)
+        Pi_bins = {}
+        n_iters = len(flux_matrices)
+        array = np.empty((n_iters, 14), dtype=np.float64)
+
+        for iteration, matrix in enumerate(flux_matrices):
+            sum_J_ji = np.sum(matrix, axis=1)
+            sum_J_ij = np.sum(matrix, axis=0)
+            Pi = sum_J_ji - sum_J_ij
+            array[iteration] = Pi
+
+        for i in range(14):
+            Pi_bins[f'bin_{i + 1}'] = array[:, i]
+
+        fig, ax = plt.subplots(1, 1, figsize=(14,8))
+        for key, value in Pi_bins.items():
+            ax.plot(value, label=key)
+
+    def plot_conditional_flux_evolution(self):
+
+        with self.direct_h5():
+            conditional_flux_evolution = self.conditional_flux_evolution
+
+        flux_matrices = self._make_flux_matrices(conditional_flux_evolution)
+        Pi_bins = {}
+        n_iters = len(flux_matrices)
+        array = np.empty((n_iters, 14), dtype=np.float64)
+
+        for iteration, matrix in enumerate(flux_matrices):
+            sum_J_ji = np.sum(matrix, axis=1)
+            sum_J_ij = np.sum(matrix, axis=0)
+            Pi = sum_J_ji - sum_J_ij
+            array[iteration] = Pi
+
+        for i in range(14):
+            Pi_bins[f'bin_{i+1}'] = array[:,i]
+
+        fig, ax = plt.subplots(1, 1, figsize=(14, 8))
+
+        for key, value in Pi_bins.items():
+            ax.plot(value, label=key)
+
+

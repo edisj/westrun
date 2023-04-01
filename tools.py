@@ -8,6 +8,8 @@ Module to make a nice registry of WESTPA commands
 
 import subprocess
 from .westcli import CommandBase
+
+
 west_tools = ('w_bins', 'w_truncate', 'w_fork', 'w_assign', 'w_trace', 'w_fluxanl',
               'w_ipa', 'w_pdist', 'w_succ', 'w_crawl', 'w_direct', 'w_select',
               'w_states', 'w_eddist', 'w_ntop', 'w_multi_west', 'plothist', 'ploterr')

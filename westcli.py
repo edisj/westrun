@@ -10,7 +10,6 @@ import os
 import subprocess
 from pathlib import Path
 from wand.image import Image
-#from . import tools
 
 
 class CommandBase:
@@ -115,7 +114,7 @@ class WESTcli:
                 # 'W_*' class whose name in this namespace is 'w_*'
                 # i.e. a 'W_bins" class becomes 'WESTcli.w_bins'
                 # Each class inherits from CommandBase
-                setattr(self, name, cls(self.WEST_SIM_ROOT)) # MAGIC CLASS FACTORY ??
+                setattr(self, name, cls(self.WEST_SIM_ROOT))
                 self._available_w_commands.append(name)
             except:
                 self._missing_w_commands.append(name)
